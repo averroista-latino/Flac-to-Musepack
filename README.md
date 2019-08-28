@@ -1,9 +1,11 @@
 # whatmp3
 
-This is a fork of whatmp3 with emphasis in Musepack and Nero AAC transcodes since there are no other scripts with full tag support for those codecs.
+This is a fork of whatmp3 with emphasis in Musepack and Nero AAC transcodes since there are no other scripts with full tag support for those codecs. Both codecs are still competent at bitrates above ~150 and there are no ABX tests proving that these are worse than any  other "modern codecs". So, enjoy my favorite high-bitrate lossy codecs.
 
 
 ## configuration
+
+first, you obviously need to install the musepack and aac nero encoders (mpcenc and neroaacenc).
 
 whatmp3 can be completely configured with the command line options, but
 default options can be changed by editing the file itself.
