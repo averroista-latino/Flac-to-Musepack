@@ -36,7 +36,7 @@ tracker = None
 max_threads = multiprocessing.cpu_count()
 
 # Tags to copy (note: changing/adding to these requires changing/adding values in/to 'encoders' below)
-copy_tags = ('TITLE', 'ALBUM', 'ARTIST', 'TRACKNUMBER', 'GENRE', 'COMMENT', 'DATE')
+copy_tags = ('TITLE', 'ALBUM', 'ARTIST', 'TRACKNUMBER', 'GENRE', 'COMMENT', 'DATE', 'COMPOSER')
 
 # Default encoding options
 enc_opts = {
@@ -45,9 +45,10 @@ enc_opts = {
     'V2':   {'enc': 'lame',       'ext': '.mp3',  'opts': '-q 0 -V 2 --vbr-new --ignore-tag-errors --noreplaygain'},
     'V8':   {'enc': 'lame',       'ext': '.mp3',  'opts': '-q 0 -V 8 --vbr-new --ignore-tag-errors --noreplaygain'},
     'Q8':   {'enc': 'oggenc',     'ext': '.ogg',  'opts': '-q 8 --utf8'},
-    'AAC':  {'enc': 'neroAacEnc', 'ext': '.aac',  'opts': '-br 320000'},
+    'AAC':  {'enc': 'neroAacEnc', 'ext': '.m4a',  'opts': '-q 0.60'},
     'ALAC': {'enc': 'ffmpeg',     'ext': '.m4a',  'opts': ''},
-    'FLAC': {'enc': 'flac',       'ext': '.flac', 'opts': '--best'}
+    'FLAC': {'enc': 'flac',       'ext': '.flac', 'opts': '--best'},
+    'mpc':  {'enc': 'mpcenc',     'ext': '.mpc', 'opts': '--extreme'}
 }
 
 encoders = {
@@ -62,6 +63,17 @@ encoders = {
         'COMMENT':     "--tc '%(COMMENT)s'",
         'regain':      "mp3gain -q -c -s i '%s'/*.mp3"
     },
+    'mpcenc': {
+        'enc':         "mpcenc %(opts)s %(tags)s - '%(filename)s' 2>&1",
+        'TITLE':       "--title '%(TITLE)s'",
+        'ALBUM':       "--album '%(ALBUM)s'",
+        'ARTIST':      "--artist '%(ARTIST)s'",
+        'TRACKNUMBER': "--track '%(TRACKNUMBER)s'",
+        'GENRE':       "--genre '%(GENRE)s'",
+        'DATE':        "--year '%(DATE)s'",
+        'COMMENT':     "--comment '%(COMMENT)s'",
+        'COMPOSER':     "--composer '%(COMPOSER)s'"
+    },
     'oggenc': {
         'enc':         "oggenc -Q %(opts)s %(tags)s -o '%(filename)s' - 2>&1",
         'TITLE':       "-t '%(TITLE)s'",
@@ -74,7 +86,7 @@ encoders = {
         'regain':      "vorbisgain -qafrs '%s'/*.ogg"
     },
     'neroAacEnc': {
-        'enc':         "neroAacEnc %(opts)s -if - -of '%(filename)s' 2>&1 && neroAacTag %(tags)s",
+        'enc':         "neroAacEnc %(opts)s -if - -of '%(filename)s' 2>&1 && neroAacTag '%(filename)s' %(tags)s",
         'TITLE':       "-meta:title='%(TITLE)s'",
         'ALBUM':       "-meta:album='%(ALBUM)s'",
         'ARTIST':      "-meta:artist='%(ARTIST)s'",
@@ -82,7 +94,7 @@ encoders = {
         'GENRE':       "-meta:genre='%(GENRE)s'",
         'DATE':        "-meta:year='%(DATE)s'",
         'COMMENT':     "-meta:comment='%(COMMENT)s'",
-        'regain':      "aacgain -q -c '%s'/*.aac"
+#        'regain':      "aacgain -q -c '%s'/*.aac"
     },
     'ffmpeg': {
         'enc':         "ffmpeg %(opts)s -i - -acodec alac %(tags)s '%(filename)s' 2>&1",
